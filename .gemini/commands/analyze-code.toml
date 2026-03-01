@@ -1,0 +1,10 @@
+description = "Perform a deep analysis of the project code."
+prompt = """
+## Task
+Activate the `code-analyzer` skill and follow its workflow to perform a comprehensive review of the project's code.
+
+Focus on:
+1. Consistency with `GEMINI.md`.
+2. Opportunities for design improvements.
+3. Performance and safety enhancements.
+"""

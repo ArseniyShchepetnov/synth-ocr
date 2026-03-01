@@ -1,0 +1,13 @@
+description = "Get mypy errors and fix them."
+prompt = """
+
+## Workflow
+1. Review errors from ruff:
+!{uv run mypy .}
+
+2. Fix errors that you can.
+3. Return a list of errors which should be fixed manually.
+
+## Instructions:
+- Do not affect functionality.
+"""

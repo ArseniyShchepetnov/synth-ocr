@@ -1,0 +1,7 @@
+description = "Generate a commit message and commit changes."
+prompt = """
+## Task
+Activate the `commit-message-generator` skill to generate a high-quality commit message in conventional commit format.
+
+After generating the message, execute the `git commit -m "<MESSAGE>"` command to commit the staged changes.
+"""

@@ -1,0 +1,91 @@
+[project]
+name = "synth-ocr"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "click>=8.3.1",
+    "datasets>=4.5.0",
+    "loguru>=0.7.3",
+    "opencv-contrib-python>=4.13.0.92",
+    "opencv-python>=4.13.0.92",
+    "pillow>=12.1.1",
+    "pydantic>=2.12.5",
+    "python-decouple>=3.8",
+]
+
+[dependency-groups]
+dev = ["mypy>=1.19.1", "pre-commit>=4.5.1", "pytest>=9.0.2", "ruff>=0.15.2"]
+
+[tool.uv]
+package = true
+
+[project.scripts]
+synth-ocr = "synthocr.cli:cli"
+
+[tool.ruff]
+line-length = 79
+target-version = "py311"
+
+[tool.ruff.lint]
+select = [
+    "F",
+    "E",
+    "W",
+    "I",
+    "N",
+    "D",
+    "UP",
+    "YTT",
+    "ANN",
+    "S",
+    "BLE",
+    "FBT",
+    "B",
+    "A",
+    "C4",
+    "DTZ",
+    "T10",
+    "ICN",
+    "INP",
+    "PIE",
+    "T20",
+    "PT",
+    "Q",
+    "RSE",
+    "RET",
+    "SLF",
+    "SIM",
+    "TCH",
+    "ARG",
+    "PTH",
+    "ERA",
+    "PL",
+    "TRY",
+    "RUF",
+]
+ignore = []
+
+[tool.ruff.lint.pycodestyle]
+max-doc-length = 79
+
+
+[tool.ruff.lint.flake8-annotations]
+suppress-none-returning = true
+
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = ["F401"]
+"tests/**" = ["S101", "PLR2004"]
+"tests/**/__init__.py" = ["D104"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+skip-magic-trailing-comma = false
+line-ending = "auto"
+
+[[tool.mypy.overrides]]
+module = ["decouple", "datasets", "loguru", "PIL", "cv2"]
+ignore_missing_imports = true
+follow_untyped_imports = true
