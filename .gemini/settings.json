@@ -1,0 +1,20 @@
+{
+  "ui": {
+    "hideBanner": true
+  },
+  "hooks": {
+    "AfterTool": [
+      {
+        "matcher": "write_file|replace",
+        "hooks": [
+          {
+            "name": "formatting",
+            "type": "command",
+            "command": ".gemini/hooks/format.sh",
+            "description": "uv run ruff format"
+          }
+        ]
+      }
+    ]
+  }
+}

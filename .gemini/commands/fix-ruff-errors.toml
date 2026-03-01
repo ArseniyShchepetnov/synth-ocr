@@ -1,0 +1,15 @@
+description = "Get ruff errors and fix them."
+prompt = """
+
+## Workflow
+1. Review errors from ruff:
+!{uv run ruff format & uv run ruff check --fix}
+
+2. Fix errors.
+
+## Instructions:
+- Do not use `--unsafe-fixes` option
+- Do not make changes that affect functionality
+- Do not fix errors that require changes in more than 2 lines of code
+- Do not suppress and fix these errors: PLR
+"""
