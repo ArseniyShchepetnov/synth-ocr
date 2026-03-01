@@ -1,7 +1,0 @@
-
-description = "Write high quality commit message."
-prompt = """
-## Task
-Generate high quality commit message in conventional commit format.
-
-"""

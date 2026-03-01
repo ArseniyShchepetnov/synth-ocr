@@ -1,0 +1,5 @@
+description = "Prepare a high-quality pull request."
+prompt = """
+## Task
+Activate the `pull-request-creator` skill and follow its workflow to prepare a pull request for my changes.
+"""
