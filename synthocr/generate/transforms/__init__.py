@@ -1,4 +1,7 @@
-"""Image transformations for OCR dataset generation."""
+"""Image transformations for OCR dataset generation.
+
+Dynamic addition of transforms supports extension.
+"""
 
 import importlib
 import inspect

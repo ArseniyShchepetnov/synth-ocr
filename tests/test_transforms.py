@@ -1,6 +1,7 @@
 """Tests for image transformations."""
 
 from pathlib import Path
+from typing import Any
 
 import cv2
 import numpy as np
@@ -112,16 +113,16 @@ def test_huggingface_background_transform() -> None:
 
 def test_pipeline_from_config() -> None:
     """Test pipeline creation from configuration dictionary."""
-    config = [
-        {"name": "RotationTransform", "params": {"max_angle": 10}},
-        {"name": "GaussianNoiseTransform", "params": {"sigma": 5.0}},
+    config: list[dict[str, Any]] = [
+        {"name": "RotationTransform", "max_angle": 10},
+        {"name": "GaussianNoiseTransform", "sigma": 5.0},
         {
             "name": "RandomImageBackgroundTransform",
-            "params": {"image_dir": "test_dir"},
+            "image_dir": "test_dir",
         },
         {
             "name": "HuggingFaceBackgroundTransform",
-            "params": {"dataset_name": "fashion_mnist"},
+            "dataset_name": "fashion_mnist",
         },
     ]
     pipeline = SampleTransformPipeline.from_config(config)
@@ -134,9 +135,9 @@ def test_pipeline_from_config() -> None:
 
 def test_pipeline_from_config_snake_case() -> None:
     """Test pipeline creation from config with snake_case names."""
-    config = [
-        {"name": "rotation_transform", "params": {"max_angle": 10}},
-        {"name": "gaussian_noise_transform", "params": {"sigma": 5.0}},
+    config: list[dict[str, Any]] = [
+        {"name": "rotation_transform", "max_angle": 10},
+        {"name": "gaussian_noise_transform", "sigma": 5.0},
     ]
     pipeline = SampleTransformPipeline.from_config(config)
     assert len(pipeline.transforms) == 2
