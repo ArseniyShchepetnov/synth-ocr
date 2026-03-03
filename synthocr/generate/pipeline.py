@@ -25,7 +25,6 @@ class GenerationPipeline(BaseModel):
     document_generator: SynthImageGenerator
     transform_pipeline: SampleTransformPipeline
     output_dir: str
-    lang_config: list[dict] | None = None
     min_text_samples: int = 10
     max_text_samples: int = 30
 
@@ -36,12 +35,12 @@ class GenerationPipeline(BaseModel):
         Path(self.output_dir).mkdir(parents=True, exist_ok=True)
 
     def _get_random_language(self) -> str | None:
-        """Select a random language based on configuration."""
-        if not self.lang_config:
+        """Select a random language based on source configuration."""
+        if not hasattr(self.source, "languages") or not self.source.languages:
             return None
-        langs = [lc["code"] for lc in self.lang_config]
-        probs = [lc["probability"] for lc in self.lang_config]
-        return random.choices(langs, weights=probs, k=1)[0]  # noqa: S311
+        langs = [lc.code for lc in self.source.languages]
+        weights = [lc.priority for lc in self.source.languages]
+        return random.choices(langs, weights=weights, k=1)[0]  # noqa: S311
 
     def _generate_text_samples(
         self, lang: str | None, lines_needed: int, min_line_length: int = 10

@@ -388,7 +388,7 @@ class StampTransform(BaseTransform):
             ty = self.rng.randint(0, max(1, h - stamp_size))
 
             image_rgba = (
-                sample.image
+                sample.image.copy()
                 if sample.image.shape[2] == rgba_channels
                 else cv2.cvtColor(sample.image, cv2.COLOR_RGB2RGBA)
             )

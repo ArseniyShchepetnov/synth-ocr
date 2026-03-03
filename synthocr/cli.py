@@ -29,9 +29,6 @@ def cli(extra_transforms: list[str]):
 
 @cli.command()
 @click.option(
-    "--langs", multiple=True, default=["en"], help="Languages to mix"
-)
-@click.option(
     "--output", type=click.Path(), default="output", help="Output directory"
 )
 @click.option(
@@ -43,13 +40,10 @@ def cli(extra_transforms: list[str]):
     type=click.Path(exists=True),
     help="Path to transform pipeline config JSON",
 )
-@click.option("--fonts", multiple=True, help="Paths to .ttf or .otf fonts")
 def generate(
-    langs: list[str],
     output: str,
     num_samples: int,
     config_file: str | None,
-    fonts: list[str],
 ):
     """Run the OCR dataset generation pipeline."""
     hf_token = decouple.config("HF_TOKEN", default=None)
@@ -69,48 +63,51 @@ def generate(
 
         shutil.copy2(config_file, output_path / "config.json")
 
-    font_config = []
     if isinstance(config, list):
         transform_pipeline = SampleTransformPipeline.from_config(config)
-        lang_config = None
-        target_langs = list(langs)
+        source_langs = [{"code": "en", "priority": 1.0}]
     else:
+        # Check for nested document_generator config
+        doc_gen_config = config.get("document_generator", {})
+
         transforms_config = config.get("transforms", [])
         transform_pipeline = SampleTransformPipeline.from_config(
             transforms_config
         )
-        lang_config = config.get("languages")
-        font_config = config.get("fonts", [])
-        if lang_config:
-            target_langs = [lc["code"] for lc in lang_config]
-        else:
-            target_langs = list(langs)
 
-    if not font_config and not fonts:
-        default_paths = [
-            "/System/Library/Fonts/SFGeorgian.ttf",
-            "/Library/Fonts/Arial.ttf",
-            "/System/Library/Fonts/Supplemental/Arial.ttf",
-            "/System/Library/Fonts/Supplemental/Arial Unicode.ttf",
-        ]
-        font_paths = [p for p in default_paths if Path(p).exists()]
-        font_config = [
-            {"path": p, "priority": 10, "languages": ["en", "ka"]}
-            for p in font_paths
-        ]
-    elif fonts:
-        # Override with command line fonts if provided
-        font_config = [
-            {"path": f, "priority": 10, "languages": target_langs}
-            for f in fonts
-        ]
+        # Source config handles languages
+        source_config = config.get("source", {})
+        source_langs = source_config.get(
+            "languages",
+            config.get("languages", [{"code": "en", "priority": 1.0}]),
+        )
 
-    click.echo(f"Loading Wikipedia source for languages: {target_langs}")
-    source = WikipediaSource(languages=target_langs)
+        # Prefer nested font_config if it exists, otherwise
+        # fall back to top-level "fonts"
+        font_config = doc_gen_config.get(
+            "font_config", config.get("fonts", [])
+        )
 
-    min_blocks = config.get("min_blocks", 4)
-    max_blocks = config.get("max_blocks", 10)
-    margin = config.get("margin", 10)
+        langs_codes = [lang["code"] for lang in source_langs]
+        click.echo(f"Loading Wikipedia source for languages: {langs_codes}")
+        source = WikipediaSource(languages=source_langs)
+
+    # Load generator parameters from nested doc_gen_config if available
+    min_blocks = (
+        doc_gen_config.get("min_blocks", config.get("min_blocks", 4))
+        if not isinstance(config, list)
+        else 4
+    )
+    max_blocks = (
+        doc_gen_config.get("max_blocks", config.get("max_blocks", 10))
+        if not isinstance(config, list)
+        else 10
+    )
+    margin = (
+        doc_gen_config.get("margin", config.get("margin", 10))
+        if not isinstance(config, list)
+        else 10
+    )
 
     doc_gen = SynthImageGenerator(
         font_config=font_config,
@@ -119,15 +116,22 @@ def generate(
         margin=margin,
     )
 
-    min_text = config.get("min_text_samples", 15)
-    max_text = config.get("max_text_samples", 30)
+    min_text = (
+        config.get("min_text_samples", 15)
+        if not isinstance(config, list)
+        else 15
+    )
+    max_text = (
+        config.get("max_text_samples", 30)
+        if not isinstance(config, list)
+        else 30
+    )
 
     pipeline = GenerationPipeline(
         source=source,
         document_generator=doc_gen,
         transform_pipeline=transform_pipeline,
         output_dir=output,
-        lang_config=lang_config,
         min_text_samples=min_text,
         max_text_samples=max_text,
     )

@@ -1,6 +1,8 @@
 """Base classes and utilities for image transformations."""
 
 import abc
+import importlib
+import inspect
 import random
 from dataclasses import dataclass
 from typing import Any
@@ -41,6 +43,37 @@ class BaseTransform(BaseModel, abc.ABC):
     def __call__(self, samples: list[Sample]) -> list[Sample]:
         """Apply the transformation to a list of samples."""
         ...
+
+
+def discover_transforms(
+    modules: list[str], external: list[str] | None = None
+) -> list[type[BaseTransform]]:
+    """Discover all BaseTransform subclasses in specified modules."""
+    transforms: list[type[BaseTransform]] = []
+    all_modules = modules.copy()
+    if external:
+        all_modules.extend(external)
+
+    for module_name in all_modules:
+        try:
+            # Handle both absolute and relative imports
+            if module_name.startswith("."):
+                module = importlib.import_module(
+                    module_name, package="synthocr.generate.transforms"
+                )
+            else:
+                module = importlib.import_module(module_name)
+
+            for _, obj in inspect.getmembers(module, inspect.isclass):
+                if (
+                    issubclass(obj, BaseTransform)
+                    and obj is not BaseTransform
+                    and obj not in transforms
+                ):
+                    transforms.append(obj)
+        except (ImportError, TypeError):
+            continue
+    return transforms
 
 
 def sample_param(param: Any, rng: random.Random) -> Any:  # noqa: ANN401
