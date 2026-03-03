@@ -9,6 +9,13 @@ from datasets import load_dataset
 from pydantic import BaseModel, Field, PrivateAttr
 
 
+class SourceLanguageConfig(BaseModel):
+    """Configuration for a single language in a source."""
+
+    code: str
+    priority: float = 1.0
+
+
 class TextSource(BaseModel, ABC):
     """Base class for text sources."""
 
@@ -28,7 +35,7 @@ class WikipediaSource(TextSource):
     """Source for text from Wikipedia."""
 
     type: Literal["wikipedia"] = "wikipedia"
-    languages: list[str]
+    languages: list[SourceLanguageConfig]
     date: str = "20231101"
 
     _datasets: dict = PrivateAttr(default_factory=dict)
@@ -37,9 +44,9 @@ class WikipediaSource(TextSource):
     def model_post_init(self, __context: Any) -> None:  # noqa: ANN401
         """Initialize datasets and iterators."""
         self._datasets = {
-            lang: load_dataset(
+            lang.code: load_dataset(
                 "wikimedia/wikipedia",
-                f"{self.date}.{lang}",
+                f"{self.date}.{lang.code}",
                 split="train",
                 streaming=True,
             )
@@ -63,9 +70,25 @@ class WikipediaSource(TextSource):
             return next(self._iterators[language])["text"]
 
     def iter_samples(self) -> Iterator[str]:
-        """Iterate over all loaded languages randomly."""
+        """Iterate over all loaded languages randomly based on priority."""
+        langs = [lang.code for lang in self.languages]
+        priorities = [lang.priority for lang in self.languages]
+
         while self._iterators:
-            lang = random.choice(list(self._iterators.keys()))  # noqa: S311
+            # Re-filter available languages in case some are exhausted
+            available_indices = [
+                i for i, lang in enumerate(langs) if lang in self._iterators
+            ]
+            if not available_indices:
+                break
+
+            current_langs = [langs[i] for i in available_indices]
+            current_priorities = [priorities[i] for i in available_indices]
+
+            lang = random.choices(  # noqa: S311
+                current_langs, weights=current_priorities, k=1
+            )[0]
+
             try:
                 item = next(self._iterators[lang])
                 yield item["text"]
@@ -77,93 +100,3 @@ SourceType = Annotated[
     WikipediaSource,
     Field(discriminator="type"),
 ]
-
-
-class ReceiptSource(BaseModel):
-    """Source for structured receipt data."""
-
-    wiki: WikipediaSource | None = None
-    item_names: dict[str, list[str]] = Field(
-        default_factory=lambda: {
-            "ka": [
-                "პური",
-                "რძე",
-                "ყველი",
-                "კარაქი",
-                "წყალი",
-                "ღვინო",
-                "ხილი",
-                "ბოსტნეული",
-                "ხორცი",
-                "თევზი",
-            ],
-            "en": [
-                "Bread",
-                "Milk",
-                "Cheese",
-                "Butter",
-                "Water",
-                "Wine",
-                "Fruit",
-                "Vegetables",
-                "Meat",
-                "Fish",
-            ],
-            "ru": [
-                "Хлеб",
-                "Молоко",
-                "Сыр",
-                "Масло",
-                "Вода",
-                "Вино",
-                "Фрукты",
-                "Овощи",
-                "Мясо",
-                "Рыба",
-            ],
-        }
-    )
-
-    def generate_receipt_data(self) -> dict:
-        """Generate structured receipt data."""
-        num_items = random.randint(3, 12)  # noqa: S311
-        items = []
-        total = 0.0
-
-        langs = list(self.item_names.keys())
-
-        for _ in range(num_items):
-            l1, l2 = random.sample(langs, 2)
-            name = (
-                f"{random.choice(self.item_names[l1])} / "  # noqa: S311
-                f"{random.choice(self.item_names[l2])}"  # noqa: S311
-            )
-
-            sku = "".join(
-                [str(random.randint(0, 9)) for _ in range(13)]  # noqa: S311
-            )
-            price = round(random.uniform(0.5, 100.0), 2)  # noqa: S311
-            qty = random.randint(1, 5)  # noqa: S311
-            line_total = round(price * qty, 2)
-            total += line_total
-
-            items.append(
-                {
-                    "sku": sku,
-                    "name": name,
-                    "price": f"{price:.2f}",
-                    "qty": str(qty),
-                    "total": f"{line_total:.2f}",
-                }
-            )
-
-        return {
-            "header": {
-                "store": "MULTILINGUAL MARKET",
-                "address": "Tbilisi, Georgia",
-                "terminal": f"T-{random.randint(100, 999)}",  # noqa: S311
-                "date": "30.01.2026 19:51:18",
-            },
-            "items": items,
-            "total": f"{total:.2f}",
-        }

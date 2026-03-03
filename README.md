@@ -23,19 +23,14 @@ The `generate` command creates a batch of synthetic images and their annotations
 # Basic generation (defaults to 10 samples in English)
 uv run synth-ocr generate
 
-# Generate 50 samples mixing English and Georgian with a custom config
-uv run synth-ocr generate --langs en --langs ka --num-samples 50 --config config.json
-
-# Specify custom fonts
-uv run synth-ocr generate --fonts /path/to/font.ttf --fonts /path/to/other_font.otf
+# Generate 50 samples with a custom config
+uv run synth-ocr generate --num-samples 50 --config config.json
 ```
 
 **Options:**
-- `--langs`: Languages to include (can be repeated).
 - `--num-samples`: Number of samples to generate (default: 10).
 - `--output`: Directory to save the results (default: `output`).
 - `--config`: Path to a JSON configuration file for transforms and pipeline settings.
-- `--fonts`: Paths to custom `.ttf` or `.otf` files.
 
 ### Generate Configuration Schema
 

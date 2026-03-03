@@ -1,6 +1,7 @@
 {
-  "ui": {
-    "hideBanner": true
+  "$schema": "https://raw.githubusercontent.com/google-gemini/gemini-cli/main/schemas/settings.schema.json",
+  "hooksConfig": {
+    "enabled": true
   },
   "hooks": {
     "AfterTool": [
@@ -8,13 +9,15 @@
         "matcher": "write_file|replace",
         "hooks": [
           {
-            "name": "formatting",
+            "name": "code-formatting",
             "type": "command",
-            "command": ".gemini/hooks/format.sh",
-            "description": "uv run ruff format"
+            "command": "uv run ruff format"
           }
         ]
       }
     ]
+  },
+  "ui": {
+    "hideBanner": true
   }
 }

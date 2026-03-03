@@ -1,0 +1,1406 @@
+{
+  "$defs": {
+    "BackgroundFillTransform": {
+      "description": "Fills the transparent background with a solid color.\n\nThe algorithm uses alpha blending to composite the existing image over\na solid background color. If no color is provided, a random bright\ncolor is generated.",
+      "properties": {
+        "name": {
+          "default": "BackgroundFillTransform",
+          "enum": [
+            "background_fill_transform",
+            "BackgroundFillTransform"
+          ],
+          "title": "Name",
+          "type": "string"
+        },
+        "color": {
+          "anyOf": [
+            {
+              "maxItems": 3,
+              "minItems": 3,
+              "prefixItems": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "integer"
+                }
+              ],
+              "type": "array"
+            },
+            {
+              "items": {
+                "type": "integer"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Color"
+        },
+        "probability": {
+          "default": 1.0,
+          "title": "Probability",
+          "type": "number"
+        },
+        "seed": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Seed"
+        }
+      },
+      "title": "BackgroundFillTransform",
+      "type": "object"
+    },
+    "BrightnessContrastTransform": {
+      "description": "Adjusts the brightness and contrast of the image.\n\nThe algorithm uses linear scaling applied only to the RGB channels\nwhile maintaining the original alpha channel.",
+      "properties": {
+        "name": {
+          "default": "BrightnessContrastTransform",
+          "enum": [
+            "brightness_contrast_transform",
+            "BrightnessContrastTransform"
+          ],
+          "title": "Name",
+          "type": "string"
+        },
+        "brightness": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "items": {
+                "type": "number"
+              },
+              "type": "array"
+            }
+          ],
+          "default": 0.0,
+          "title": "Brightness"
+        },
+        "contrast": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "items": {
+                "type": "number"
+              },
+              "type": "array"
+            }
+          ],
+          "default": 1.0,
+          "title": "Contrast"
+        },
+        "probability": {
+          "default": 1.0,
+          "title": "Probability",
+          "type": "number"
+        },
+        "seed": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Seed"
+        }
+      },
+      "title": "BrightnessContrastTransform",
+      "type": "object"
+    },
+    "CircleTransform": {
+      "description": "Draws a hand-drawn circle or ellipse around a text line.\n\nThe algorithm selects a random text line and draws multiple overlapping,\nslightly jittered arcs in blue ink.",
+      "properties": {
+        "name": {
+          "default": "CircleTransform",
+          "enum": [
+            "circle_transform",
+            "CircleTransform"
+          ],
+          "title": "Name",
+          "type": "string"
+        },
+        "probability": {
+          "default": 0.4,
+          "title": "Probability",
+          "type": "number"
+        },
+        "seed": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Seed"
+        }
+      },
+      "title": "CircleTransform",
+      "type": "object"
+    },
+    "CrushedDocumentTransform": {
+      "description": "Simulates a crushed or folded document.\n\nThe algorithm applies a coarse elastic deformation using Cubic\ninterpolation remapping and adds random linear fold lines to the RGB\nchannels by adjusting pixel intensity along sampled vectors.",
+      "properties": {
+        "name": {
+          "default": "CrushedDocumentTransform",
+          "enum": [
+            "crushed_document_transform",
+            "CrushedDocumentTransform"
+          ],
+          "title": "Name",
+          "type": "string"
+        },
+        "distortion_scale": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "items": {
+                "type": "number"
+              },
+              "type": "array"
+            }
+          ],
+          "default": 0.03,
+          "title": "Distortion Scale"
+        },
+        "num_folds": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "items": {
+                "type": "integer"
+              },
+              "type": "array"
+            }
+          ],
+          "default": 8,
+          "title": "Num Folds"
+        },
+        "probability": {
+          "default": 1.0,
+          "title": "Probability",
+          "type": "number"
+        },
+        "seed": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Seed"
+        }
+      },
+      "title": "CrushedDocumentTransform",
+      "type": "object"
+    },
+    "CylindricalTransform": {
+      "description": "Simulates paper curvature or cylindrical wrapping.\n\nThe algorithm applies a parabolic vertical mapping to simulate the\nwarping of paper when held or placed on a curved surface. Bounding\nboxes are adjusted and fitted with minimum area rectangles to maintain\nstructural integrity.",
+      "properties": {
+        "name": {
+          "default": "CylindricalTransform",
+          "enum": [
+            "cylindrical_transform",
+            "CylindricalTransform"
+          ],
+          "title": "Name",
+          "type": "string"
+        },
+        "curvature": {
+          "default": 0.0001,
+          "title": "Curvature",
+          "type": "number"
+        },
+        "probability": {
+          "default": 0.5,
+          "title": "Probability",
+          "type": "number"
+        },
+        "seed": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Seed"
+        }
+      },
+      "title": "CylindricalTransform",
+      "type": "object"
+    },
+    "DilationTransform": {
+      "description": "Applies morphological dilation to the image.\n\nThe algorithm uses a square kernel of a sampled size to expand\nthe brighter regions in the image.",
+      "properties": {
+        "name": {
+          "default": "DilationTransform",
+          "enum": [
+            "dilation_transform",
+            "DilationTransform"
+          ],
+          "title": "Name",
+          "type": "string"
+        },
+        "kernel_size": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "items": {
+                "type": "integer"
+              },
+              "type": "array"
+            }
+          ],
+          "default": 3,
+          "title": "Kernel Size"
+        },
+        "iterations": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "items": {
+                "type": "integer"
+              },
+              "type": "array"
+            }
+          ],
+          "default": 1,
+          "title": "Iterations"
+        },
+        "probability": {
+          "default": 1.0,
+          "title": "Probability",
+          "type": "number"
+        },
+        "seed": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Seed"
+        }
+      },
+      "title": "DilationTransform",
+      "type": "object"
+    },
+    "ErosionTransform": {
+      "description": "Applies morphological erosion to the image.\n\nThe algorithm uses a square kernel of a sampled size to shrink\nthe brighter regions in the image.",
+      "properties": {
+        "name": {
+          "default": "ErosionTransform",
+          "enum": [
+            "erosion_transform",
+            "ErosionTransform"
+          ],
+          "title": "Name",
+          "type": "string"
+        },
+        "kernel_size": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "items": {
+                "type": "integer"
+              },
+              "type": "array"
+            }
+          ],
+          "default": 3,
+          "title": "Kernel Size"
+        },
+        "iterations": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "items": {
+                "type": "integer"
+              },
+              "type": "array"
+            }
+          ],
+          "default": 1,
+          "title": "Iterations"
+        },
+        "probability": {
+          "default": 1.0,
+          "title": "Probability",
+          "type": "number"
+        },
+        "seed": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Seed"
+        }
+      },
+      "title": "ErosionTransform",
+      "type": "object"
+    },
+    "FontConfig": {
+      "description": "Configuration for a single font.",
+      "properties": {
+        "path": {
+          "title": "Path",
+          "type": "string"
+        },
+        "priority": {
+          "default": 1.0,
+          "title": "Priority",
+          "type": "number"
+        },
+        "languages": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Languages",
+          "type": "array"
+        }
+      },
+      "required": [
+        "path"
+      ],
+      "title": "FontConfig",
+      "type": "object"
+    },
+    "GaussianNoiseTransform": {
+      "description": "Adds random Gaussian noise to the image.\n\nThe algorithm generates noise from a normal distribution and adds it\nexclusively to the RGB channels, preserving the alpha channel.",
+      "properties": {
+        "name": {
+          "default": "GaussianNoiseTransform",
+          "enum": [
+            "gaussian_noise_transform",
+            "GaussianNoiseTransform"
+          ],
+          "title": "Name",
+          "type": "string"
+        },
+        "sigma": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "items": {
+                "type": "number"
+              },
+              "type": "array"
+            }
+          ],
+          "title": "Sigma"
+        },
+        "probability": {
+          "default": 1.0,
+          "title": "Probability",
+          "type": "number"
+        },
+        "seed": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Seed"
+        }
+      },
+      "required": [
+        "sigma"
+      ],
+      "title": "GaussianNoiseTransform",
+      "type": "object"
+    },
+    "HandwritingTransform": {
+      "description": "Simulates handwritten notes or marks on the document.\n\nThe algorithm uses Pillow to draw randomly selected text with a\nhandwriting font at a random position.",
+      "properties": {
+        "name": {
+          "default": "HandwritingTransform",
+          "enum": [
+            "handwriting_transform",
+            "HandwritingTransform"
+          ],
+          "title": "Name",
+          "type": "string"
+        },
+        "font_path": {
+          "title": "Font Path",
+          "type": "string"
+        },
+        "texts": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Texts",
+          "type": "array"
+        },
+        "probability": {
+          "default": 0.3,
+          "title": "Probability",
+          "type": "number"
+        },
+        "seed": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Seed"
+        }
+      },
+      "required": [
+        "font_path"
+      ],
+      "title": "HandwritingTransform",
+      "type": "object"
+    },
+    "HuggingFaceBackgroundTransform": {
+      "description": "Adds a random background image from a Hugging Face dataset.\n\nThe algorithm loads a dataset from Hugging Face, selects a random\nimage from it, resizes and crops it to match the sample dimensions,\nand alpha-composites the sample onto it.",
+      "properties": {
+        "name": {
+          "default": "HuggingFaceBackgroundTransform",
+          "enum": [
+            "hugging_face_background_transform",
+            "HuggingFaceBackgroundTransform"
+          ],
+          "title": "Name",
+          "type": "string"
+        },
+        "dataset_name": {
+          "title": "Dataset Name",
+          "type": "string"
+        },
+        "split": {
+          "default": "train",
+          "title": "Split",
+          "type": "string"
+        },
+        "image_column": {
+          "default": "image",
+          "title": "Image Column",
+          "type": "string"
+        },
+        "probability": {
+          "default": 1.0,
+          "title": "Probability",
+          "type": "number"
+        },
+        "seed": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Seed"
+        },
+        "kwargs": {
+          "additionalProperties": true,
+          "title": "Kwargs",
+          "type": "object"
+        }
+      },
+      "required": [
+        "dataset_name"
+      ],
+      "title": "HuggingFaceBackgroundTransform",
+      "type": "object"
+    },
+    "MixBatchTransform": {
+      "description": "Generates synthetic samples by mixing text lines from multiple sources.\n\nThe algorithm selects a subset of samples from the batch, extracts their\ntext lines using polygon masks, and places them onto a new transparent\ncanvas. It ensures no overlaps between placed elements and uses alpha\ncompositing for realistic blending.",
+      "properties": {
+        "name": {
+          "default": "MixBatchTransform",
+          "enum": [
+            "mix_batch_transform",
+            "MixBatchTransform"
+          ],
+          "title": "Name",
+          "type": "string"
+        },
+        "m": {
+          "title": "M",
+          "type": "integer"
+        },
+        "k": {
+          "title": "K",
+          "type": "integer"
+        },
+        "min_lines": {
+          "default": 10,
+          "title": "Min Lines",
+          "type": "integer"
+        },
+        "max_lines": {
+          "default": 20,
+          "title": "Max Lines",
+          "type": "integer"
+        },
+        "margin": {
+          "default": 5,
+          "title": "Margin",
+          "type": "integer"
+        },
+        "probability": {
+          "default": 1.0,
+          "title": "Probability",
+          "type": "number"
+        },
+        "seed": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Seed"
+        }
+      },
+      "required": [
+        "m",
+        "k"
+      ],
+      "title": "MixBatchTransform",
+      "type": "object"
+    },
+    "MotionBlurTransform": {
+      "description": "Applies a horizontal or vertical motion blur.\n\nThe algorithm creates a 1D kernel oriented randomly and applies it\nusing a 2D filter to simulate movement blur.",
+      "properties": {
+        "name": {
+          "default": "MotionBlurTransform",
+          "enum": [
+            "motion_blur_transform",
+            "MotionBlurTransform"
+          ],
+          "title": "Name",
+          "type": "string"
+        },
+        "kernel_size": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "items": {
+                "type": "integer"
+              },
+              "type": "array"
+            }
+          ],
+          "default": 5,
+          "title": "Kernel Size"
+        },
+        "probability": {
+          "default": 1.0,
+          "title": "Probability",
+          "type": "number"
+        },
+        "seed": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Seed"
+        }
+      },
+      "title": "MotionBlurTransform",
+      "type": "object"
+    },
+    "PerspectiveTransform": {
+      "description": "Applies random perspective distortion.\n\nThe algorithm maps the corners of the image to new random positions\nwithin a defined distortion scale and applies the resulting perspective\nmatrix to both the image and the text line bounding boxes.",
+      "properties": {
+        "name": {
+          "default": "PerspectiveTransform",
+          "enum": [
+            "perspective_transform",
+            "PerspectiveTransform"
+          ],
+          "title": "Name",
+          "type": "string"
+        },
+        "distortion_scale": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "items": {
+                "type": "number"
+              },
+              "type": "array"
+            }
+          ],
+          "default": 0.2,
+          "title": "Distortion Scale"
+        },
+        "probability": {
+          "default": 1.0,
+          "title": "Probability",
+          "type": "number"
+        },
+        "seed": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Seed"
+        }
+      },
+      "title": "PerspectiveTransform",
+      "type": "object"
+    },
+    "RandomImageBackgroundTransform": {
+      "description": "Adds a random background image from a directory.\n\nThe algorithm selects a random image from the specified directory,\nresizes and crops it to match the sample dimensions, and alpha-composites\nthe sample onto it.",
+      "properties": {
+        "name": {
+          "default": "RandomImageBackgroundTransform",
+          "enum": [
+            "random_image_background_transform",
+            "RandomImageBackgroundTransform"
+          ],
+          "title": "Name",
+          "type": "string"
+        },
+        "image_dir": {
+          "title": "Image Dir",
+          "type": "string"
+        },
+        "probability": {
+          "default": 1.0,
+          "title": "Probability",
+          "type": "number"
+        },
+        "seed": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Seed"
+        }
+      },
+      "required": [
+        "image_dir"
+      ],
+      "title": "RandomImageBackgroundTransform",
+      "type": "object"
+    },
+    "RotationTransform": {
+      "description": "Applies random rotation to samples.\n\nThe algorithm computes a rotation matrix based on a sampled angle and\napplies it to both the image (using affine warping with transparent\nborders) and the bounding box coordinates.",
+      "properties": {
+        "name": {
+          "default": "RotationTransform",
+          "enum": [
+            "rotation_transform",
+            "RotationTransform"
+          ],
+          "title": "Name",
+          "type": "string"
+        },
+        "max_angle": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "items": {
+                "type": "number"
+              },
+              "type": "array"
+            }
+          ],
+          "title": "Max Angle"
+        },
+        "probability": {
+          "default": 1.0,
+          "title": "Probability",
+          "type": "number"
+        },
+        "seed": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Seed"
+        }
+      },
+      "required": [
+        "max_angle"
+      ],
+      "title": "RotationTransform",
+      "type": "object"
+    },
+    "SaltAndPepperNoiseTransform": {
+      "description": "Adds salt and pepper (impulse) noise.\n\nThe algorithm randomly sets pixels to either full white or full black\nbased on the specified amount and distribution ratio.",
+      "properties": {
+        "name": {
+          "default": "SaltAndPepperNoiseTransform",
+          "enum": [
+            "salt_and_pepper_noise_transform",
+            "SaltAndPepperNoiseTransform"
+          ],
+          "title": "Name",
+          "type": "string"
+        },
+        "amount": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "items": {
+                "type": "number"
+              },
+              "type": "array"
+            }
+          ],
+          "default": 0.01,
+          "title": "Amount"
+        },
+        "salt_vs_pepper": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "items": {
+                "type": "number"
+              },
+              "type": "array"
+            }
+          ],
+          "default": 0.5,
+          "title": "Salt Vs Pepper"
+        },
+        "probability": {
+          "default": 1.0,
+          "title": "Probability",
+          "type": "number"
+        },
+        "seed": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Seed"
+        }
+      },
+      "title": "SaltAndPepperNoiseTransform",
+      "type": "object"
+    },
+    "SampleTransformPipeline": {
+      "description": "Sequential execution of image transformations.",
+      "properties": {
+        "transforms": {
+          "items": {
+            "discriminator": {
+              "mapping": {
+                "BackgroundFillTransform": "#/$defs/BackgroundFillTransform",
+                "BrightnessContrastTransform": "#/$defs/BrightnessContrastTransform",
+                "CircleTransform": "#/$defs/CircleTransform",
+                "CrushedDocumentTransform": "#/$defs/CrushedDocumentTransform",
+                "CylindricalTransform": "#/$defs/CylindricalTransform",
+                "DilationTransform": "#/$defs/DilationTransform",
+                "ErosionTransform": "#/$defs/ErosionTransform",
+                "GaussianNoiseTransform": "#/$defs/GaussianNoiseTransform",
+                "HandwritingTransform": "#/$defs/HandwritingTransform",
+                "HuggingFaceBackgroundTransform": "#/$defs/HuggingFaceBackgroundTransform",
+                "MixBatchTransform": "#/$defs/MixBatchTransform",
+                "MotionBlurTransform": "#/$defs/MotionBlurTransform",
+                "PerspectiveTransform": "#/$defs/PerspectiveTransform",
+                "RandomImageBackgroundTransform": "#/$defs/RandomImageBackgroundTransform",
+                "RotationTransform": "#/$defs/RotationTransform",
+                "SaltAndPepperNoiseTransform": "#/$defs/SaltAndPepperNoiseTransform",
+                "ShadowLightingTransform": "#/$defs/ShadowLightingTransform",
+                "ShearTransform": "#/$defs/ShearTransform",
+                "StampTransform": "#/$defs/StampTransform",
+                "TextureBackgroundTransform": "#/$defs/TextureBackgroundTransform",
+                "WaveTransform": "#/$defs/WaveTransform",
+                "background_fill_transform": "#/$defs/BackgroundFillTransform",
+                "brightness_contrast_transform": "#/$defs/BrightnessContrastTransform",
+                "circle_transform": "#/$defs/CircleTransform",
+                "crushed_document_transform": "#/$defs/CrushedDocumentTransform",
+                "cylindrical_transform": "#/$defs/CylindricalTransform",
+                "dilation_transform": "#/$defs/DilationTransform",
+                "erosion_transform": "#/$defs/ErosionTransform",
+                "gaussian_noise_transform": "#/$defs/GaussianNoiseTransform",
+                "handwriting_transform": "#/$defs/HandwritingTransform",
+                "hugging_face_background_transform": "#/$defs/HuggingFaceBackgroundTransform",
+                "mix_batch_transform": "#/$defs/MixBatchTransform",
+                "motion_blur_transform": "#/$defs/MotionBlurTransform",
+                "perspective_transform": "#/$defs/PerspectiveTransform",
+                "random_image_background_transform": "#/$defs/RandomImageBackgroundTransform",
+                "rotation_transform": "#/$defs/RotationTransform",
+                "salt_and_pepper_noise_transform": "#/$defs/SaltAndPepperNoiseTransform",
+                "shadow_lighting_transform": "#/$defs/ShadowLightingTransform",
+                "shear_transform": "#/$defs/ShearTransform",
+                "stamp_transform": "#/$defs/StampTransform",
+                "texture_background_transform": "#/$defs/TextureBackgroundTransform",
+                "wave_transform": "#/$defs/WaveTransform"
+              },
+              "propertyName": "name"
+            },
+            "oneOf": [
+              {
+                "$ref": "#/$defs/BackgroundFillTransform"
+              },
+              {
+                "$ref": "#/$defs/HuggingFaceBackgroundTransform"
+              },
+              {
+                "$ref": "#/$defs/RandomImageBackgroundTransform"
+              },
+              {
+                "$ref": "#/$defs/ShadowLightingTransform"
+              },
+              {
+                "$ref": "#/$defs/TextureBackgroundTransform"
+              },
+              {
+                "$ref": "#/$defs/CrushedDocumentTransform"
+              },
+              {
+                "$ref": "#/$defs/CylindricalTransform"
+              },
+              {
+                "$ref": "#/$defs/PerspectiveTransform"
+              },
+              {
+                "$ref": "#/$defs/RotationTransform"
+              },
+              {
+                "$ref": "#/$defs/ShearTransform"
+              },
+              {
+                "$ref": "#/$defs/WaveTransform"
+              },
+              {
+                "$ref": "#/$defs/BrightnessContrastTransform"
+              },
+              {
+                "$ref": "#/$defs/CircleTransform"
+              },
+              {
+                "$ref": "#/$defs/DilationTransform"
+              },
+              {
+                "$ref": "#/$defs/ErosionTransform"
+              },
+              {
+                "$ref": "#/$defs/GaussianNoiseTransform"
+              },
+              {
+                "$ref": "#/$defs/HandwritingTransform"
+              },
+              {
+                "$ref": "#/$defs/MotionBlurTransform"
+              },
+              {
+                "$ref": "#/$defs/SaltAndPepperNoiseTransform"
+              },
+              {
+                "$ref": "#/$defs/StampTransform"
+              },
+              {
+                "$ref": "#/$defs/MixBatchTransform"
+              }
+            ]
+          },
+          "title": "Transforms",
+          "type": "array"
+        }
+      },
+      "title": "SampleTransformPipeline",
+      "type": "object"
+    },
+    "ShadowLightingTransform": {
+      "description": "Simulates uneven lighting or shadows.\n\nThe algorithm creates a linear gradient mask and multiplies it with\nthe RGB channels of the image to simulate a light source coming from\none of the edges.",
+      "properties": {
+        "name": {
+          "default": "ShadowLightingTransform",
+          "enum": [
+            "shadow_lighting_transform",
+            "ShadowLightingTransform"
+          ],
+          "title": "Name",
+          "type": "string"
+        },
+        "probability": {
+          "default": 0.6,
+          "title": "Probability",
+          "type": "number"
+        },
+        "seed": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Seed"
+        }
+      },
+      "title": "ShadowLightingTransform",
+      "type": "object"
+    },
+    "ShearTransform": {
+      "description": "Applies random shear distortion to the image.\n\nThe algorithm generates an affine transformation matrix representing\nhorizontal and vertical shearing and applies it to the image and its\nannotations.",
+      "properties": {
+        "name": {
+          "default": "ShearTransform",
+          "enum": [
+            "shear_transform",
+            "ShearTransform"
+          ],
+          "title": "Name",
+          "type": "string"
+        },
+        "max_shear": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "items": {
+                "type": "number"
+              },
+              "type": "array"
+            }
+          ],
+          "default": 0.1,
+          "title": "Max Shear"
+        },
+        "probability": {
+          "default": 1.0,
+          "title": "Probability",
+          "type": "number"
+        },
+        "seed": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Seed"
+        }
+      },
+      "title": "ShearTransform",
+      "type": "object"
+    },
+    "SourceLanguageConfig": {
+      "description": "Configuration for a single language in a source.",
+      "properties": {
+        "code": {
+          "title": "Code",
+          "type": "string"
+        },
+        "priority": {
+          "default": 1.0,
+          "title": "Priority",
+          "type": "number"
+        }
+      },
+      "required": [
+        "code"
+      ],
+      "title": "SourceLanguageConfig",
+      "type": "object"
+    },
+    "StampTransform": {
+      "description": "Applies a realistic rubber stamp effect.\n\nThe algorithm creates a separate RGBA buffer with text and a circular\nborder, applies artifacts like Gaussian blur and random pixel dropout,\nrotates it, and alpha-composites it onto the image.",
+      "properties": {
+        "name": {
+          "default": "StampTransform",
+          "enum": [
+            "stamp_transform",
+            "StampTransform"
+          ],
+          "title": "Name",
+          "type": "string"
+        },
+        "text": {
+          "default": "PAID",
+          "title": "Text",
+          "type": "string"
+        },
+        "font_path": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Font Path"
+        },
+        "probability": {
+          "default": 0.5,
+          "title": "Probability",
+          "type": "number"
+        },
+        "seed": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Seed"
+        }
+      },
+      "title": "StampTransform",
+      "type": "object"
+    },
+    "SynthImageGenerator": {
+      "description": "Generates synthetic document images by scattering text blocks.",
+      "properties": {
+        "font_config": {
+          "items": {
+            "$ref": "#/$defs/FontConfig"
+          },
+          "title": "Font Config",
+          "type": "array"
+        },
+        "image_size": {
+          "default": [
+            1024,
+            1024
+          ],
+          "maxItems": 2,
+          "minItems": 2,
+          "prefixItems": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "integer"
+            }
+          ],
+          "title": "Image Size",
+          "type": "array"
+        },
+        "min_font_size": {
+          "default": 12,
+          "title": "Min Font Size",
+          "type": "integer"
+        },
+        "max_font_size": {
+          "default": 32,
+          "title": "Max Font Size",
+          "type": "integer"
+        },
+        "min_blocks": {
+          "default": 4,
+          "title": "Min Blocks",
+          "type": "integer"
+        },
+        "max_blocks": {
+          "default": 10,
+          "title": "Max Blocks",
+          "type": "integer"
+        },
+        "margin": {
+          "default": 10,
+          "title": "Margin",
+          "type": "integer"
+        },
+        "min_text_length": {
+          "default": 5,
+          "title": "Min Text Length",
+          "type": "integer"
+        }
+      },
+      "title": "SynthImageGenerator",
+      "type": "object"
+    },
+    "TextureBackgroundTransform": {
+      "description": "Adds a procedural paper texture and optional creases.\n\nThe algorithm generates a \"paper grain\" using Gaussian noise on a solid\ncanvas, adds linear crease artifacts, and composites the original sample\nover this background using alpha blending.",
+      "properties": {
+        "name": {
+          "default": "TextureBackgroundTransform",
+          "enum": [
+            "texture_background_transform",
+            "TextureBackgroundTransform"
+          ],
+          "title": "Name",
+          "type": "string"
+        },
+        "textures_dir": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Textures Dir"
+        },
+        "crease_probability": {
+          "default": 0.5,
+          "title": "Crease Probability",
+          "type": "number"
+        },
+        "probability": {
+          "default": 1.0,
+          "title": "Probability",
+          "type": "number"
+        },
+        "seed": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Seed"
+        }
+      },
+      "title": "TextureBackgroundTransform",
+      "type": "object"
+    },
+    "WaveTransform": {
+      "description": "Applies a sine wave distortion to the image.\n\nThe algorithm computes a pixel mapping based on a sine function along the\nspecified direction (vertical or horizontal) and uses remapping for the\nimage. Bounding boxes are updated by sampling points along their edges\nand fitting a minimum area rectangle to the transformed shape.",
+      "properties": {
+        "name": {
+          "default": "WaveTransform",
+          "enum": [
+            "wave_transform",
+            "WaveTransform"
+          ],
+          "title": "Name",
+          "type": "string"
+        },
+        "amplitude": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "items": {
+                "type": "number"
+              },
+              "type": "array"
+            }
+          ],
+          "default": 10.0,
+          "title": "Amplitude"
+        },
+        "period": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "items": {
+                "type": "number"
+              },
+              "type": "array"
+            }
+          ],
+          "default": 200.0,
+          "title": "Period"
+        },
+        "direction": {
+          "default": "vertical",
+          "title": "Direction",
+          "type": "string"
+        },
+        "probability": {
+          "default": 1.0,
+          "title": "Probability",
+          "type": "number"
+        },
+        "seed": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Seed"
+        }
+      },
+      "title": "WaveTransform",
+      "type": "object"
+    },
+    "WikipediaSource": {
+      "description": "Source for text from Wikipedia.",
+      "properties": {
+        "type": {
+          "const": "wikipedia",
+          "default": "wikipedia",
+          "title": "Type",
+          "type": "string"
+        },
+        "languages": {
+          "items": {
+            "$ref": "#/$defs/SourceLanguageConfig"
+          },
+          "title": "Languages",
+          "type": "array"
+        },
+        "date": {
+          "default": "20231101",
+          "title": "Date",
+          "type": "string"
+        }
+      },
+      "required": [
+        "languages"
+      ],
+      "title": "WikipediaSource",
+      "type": "object"
+    }
+  },
+  "description": "Orchestrates the data generation process.",
+  "properties": {
+    "source": {
+      "discriminator": {
+        "mapping": {
+          "wikipedia": "#/$defs/WikipediaSource"
+        },
+        "propertyName": "type"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/WikipediaSource"
+        }
+      ],
+      "title": "Source"
+    },
+    "document_generator": {
+      "$ref": "#/$defs/SynthImageGenerator"
+    },
+    "transform_pipeline": {
+      "$ref": "#/$defs/SampleTransformPipeline"
+    },
+    "output_dir": {
+      "title": "Output Dir",
+      "type": "string"
+    },
+    "min_text_samples": {
+      "default": 10,
+      "title": "Min Text Samples",
+      "type": "integer"
+    },
+    "max_text_samples": {
+      "default": 30,
+      "title": "Max Text Samples",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "source",
+    "document_generator",
+    "transform_pipeline",
+    "output_dir"
+  ],
+  "title": "GenerationPipeline",
+  "type": "object"
+}

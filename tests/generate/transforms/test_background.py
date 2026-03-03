@@ -1,23 +1,16 @@
-"""Tests for image transformations."""
+"""Tests for background transformations."""
 
 from pathlib import Path
-from typing import Any
 
 import cv2
 import numpy as np
 
-from synthocr.generate.transforms import (
-    Annotation,
-    Sample,
-    SampleTransformPipeline,
-    TextLine,
-)
+from synthocr.generate.transforms import Annotation, Sample, TextLine
 from synthocr.generate.transforms.background import (
     HuggingFaceBackgroundTransform,
     RandomImageBackgroundTransform,
+    ShadowLightingTransform,
 )
-from synthocr.generate.transforms.distortion import RotationTransform
-from synthocr.generate.transforms.misc import GaussianNoiseTransform
 
 
 def test_random_image_background_transform(tmp_path: Path) -> None:
@@ -59,24 +52,6 @@ def test_random_image_background_transform(tmp_path: Path) -> None:
     assert len(transformed.annotation.lines) == 1
 
 
-def test_rotation_transform() -> None:
-    """Test rotation transformation."""
-    image = np.ones((100, 100, 3), dtype=np.uint8) * 255
-    bbox = np.array([[10, 10], [50, 10], [50, 30], [10, 30]], dtype=np.float32)
-    sample = Sample(
-        image=image,
-        annotation=Annotation(lines=[TextLine(text="test", bbox=bbox)]),
-    )
-
-    transform = RotationTransform(max_angle=10, seed=42)
-    rotated_samples = transform([sample])
-    rotated = rotated_samples[0]
-
-    assert rotated.image.shape == sample.image.shape
-    assert len(rotated.annotation.lines) == 1
-    assert not np.array_equal(rotated.annotation.lines[0].bbox, bbox)
-
-
 def test_huggingface_background_transform() -> None:
     """Test Hugging Face background transformation."""
     # Use a small dataset for testing, e.g., Fashion MNIST
@@ -111,43 +86,15 @@ def test_huggingface_background_transform() -> None:
     assert not np.all(transformed.image[20, 20] == [255, 255, 255])
 
 
-def test_pipeline_from_config() -> None:
-    """Test pipeline creation from configuration dictionary."""
-    config: list[dict[str, Any]] = [
-        {"name": "RotationTransform", "max_angle": 10},
-        {"name": "GaussianNoiseTransform", "sigma": 5.0},
-        {
-            "name": "RandomImageBackgroundTransform",
-            "image_dir": "test_dir",
-        },
-        {
-            "name": "HuggingFaceBackgroundTransform",
-            "dataset_name": "fashion_mnist",
-        },
-    ]
-    pipeline = SampleTransformPipeline.from_config(config)
-    assert len(pipeline.transforms) == 4
-    assert isinstance(pipeline.transforms[0], RotationTransform)
-    assert isinstance(pipeline.transforms[1], GaussianNoiseTransform)
-    assert isinstance(pipeline.transforms[2], RandomImageBackgroundTransform)
-    assert isinstance(pipeline.transforms[3], HuggingFaceBackgroundTransform)
+def test_shadow_lighting_transform() -> None:
+    """Test shadow lighting transformation."""
+    image = np.ones((200, 200, 4), dtype=np.uint8) * 200
+    image[:, :, 3] = 255
+    sample = Sample(image=image, annotation=Annotation(lines=[]))
 
+    transform = ShadowLightingTransform(probability=1.0, seed=42)
+    shadowed_samples = transform([sample])
+    shadowed = shadowed_samples[0]
 
-def test_pipeline_from_config_snake_case() -> None:
-    """Test pipeline creation from config with snake_case names."""
-    config: list[dict[str, Any]] = [
-        {"name": "rotation_transform", "max_angle": 10},
-        {"name": "gaussian_noise_transform", "sigma": 5.0},
-    ]
-    pipeline = SampleTransformPipeline.from_config(config)
-    assert len(pipeline.transforms) == 2
-    assert isinstance(pipeline.transforms[0], RotationTransform)
-    assert isinstance(pipeline.transforms[1], GaussianNoiseTransform)
-    assert pipeline.transforms[0].name in (
-        "RotationTransform",
-        "rotation_transform",
-    )
-    assert pipeline.transforms[1].name in (
-        "GaussianNoiseTransform",
-        "gaussian_noise_transform",
-    )
+    # Shadowed image should be different
+    assert not np.array_equal(shadowed.image, image)

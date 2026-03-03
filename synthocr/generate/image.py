@@ -2,13 +2,57 @@
 
 import random
 from pathlib import Path
+from typing import Any
 
 import numpy as np
 from loguru import logger
 from PIL import Image, ImageDraw, ImageFont
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, PrivateAttr
 
 from synthocr.generate.transforms import Annotation, Sample, TextLine
+
+
+class FontConfig(BaseModel):
+    """Configuration for a single font."""
+
+    path: str
+    priority: float = 1.0
+    languages: list[str] = Field(default_factory=list)
+
+
+def font_configs_to_probability(
+    font_configs: list[FontConfig],
+) -> dict[str, dict[str, float]]:
+    """Get fonts probabilities for each languages from configuration."""
+    lang_to_fonts: dict[str, list[FontConfig]] = {}
+    universal_fonts: list[FontConfig] = []
+
+    for config in font_configs:
+        if not config.languages:
+            universal_fonts.append(config)
+        for lang in config.languages:
+            if lang not in lang_to_fonts:
+                lang_to_fonts[lang] = []
+            lang_to_fonts[lang].append(config)
+
+    result: dict[str, dict[str, float]] = {}
+
+    # Helper to calculate probabilities for a list of configs
+    def calc_probs(configs: list[FontConfig]) -> dict[str, float]:
+        total_priority = sum(c.priority for c in configs)
+        if total_priority > 0:
+            return {c.path: c.priority / total_priority for c in configs}
+        return {c.path: 1.0 / len(configs) for c in configs}
+
+    # Pre-calculate for each language found in config
+    for lang, configs in lang_to_fonts.items():
+        result[lang] = calc_probs(configs)
+
+    # Add a special key for universal fonts
+    if universal_fonts:
+        result["__universal__"] = calc_probs(universal_fonts)
+
+    return result
 
 
 class SynthImageGenerator(BaseModel):
@@ -16,7 +60,7 @@ class SynthImageGenerator(BaseModel):
 
     model_config = ConfigDict(arbitrary_types_allowed=True)
 
-    font_config: list[dict] = Field(default_factory=list)
+    font_config: list[FontConfig] = Field(default_factory=list)
     image_size: tuple[int, int] = (1024, 1024)
     min_font_size: int = 12
     max_font_size: int = 32
@@ -24,6 +68,16 @@ class SynthImageGenerator(BaseModel):
     max_blocks: int = 10
     margin: int = 10
     min_text_length: int = 5
+
+    _font_probabilities: dict[str, dict[str, float]] = PrivateAttr(
+        default_factory=dict
+    )
+
+    def model_post_init(self, __context: Any) -> None:  # noqa: ANN401
+        """Initialize font probabilities."""
+        self._font_probabilities = font_configs_to_probability(
+            self.font_config
+        )
 
     def _get_random_color(
         self, *, bright: bool = True
@@ -46,29 +100,43 @@ class SynthImageGenerator(BaseModel):
         if not self.font_config:
             return None
 
-        # Filter fonts by language
-        available_fonts = []
-        if language:
-            available_fonts = [
-                f
-                for f in self.font_config
-                if language in f.get("languages", [])
-                and Path(f["path"]).exists()
+        # 1. Try to use pre-calculated probabilities for the
+        # specific language
+        if language and language in self._font_probabilities:
+            lang_fonts = self._font_probabilities[language]
+            paths = list(lang_fonts.keys())
+            probs = list(lang_fonts.values())
+
+            # Filter by existence at runtime
+            valid_indices = [
+                i for i, p in enumerate(paths) if Path(p).exists()
             ]
+            if valid_indices:
+                current_paths = [paths[i] for i in valid_indices]
+                current_probs = [probs[i] for i in valid_indices]
+                return random.choices(  # noqa: S311
+                    current_paths, weights=current_probs, k=1
+                )[0]
 
-        # Fallback to any available font if language specific not found
-        if not available_fonts:
-            available_fonts = [
-                f for f in self.font_config if Path(f["path"]).exists()
+        # 2. Fallback to universal fonts (no languages specified in config)
+        if "__universal__" in self._font_probabilities:
+            univ_fonts = self._font_probabilities["__universal__"]
+            paths = list(univ_fonts.keys())
+            probs = list(univ_fonts.values())
+
+            valid_indices = [
+                i for i, p in enumerate(paths) if Path(p).exists()
             ]
+            if valid_indices:
+                current_paths = [paths[i] for i in valid_indices]
+                current_probs = [probs[i] for i in valid_indices]
+                return random.choices(  # noqa: S311
+                    current_paths, weights=current_probs, k=1
+                )[0]
 
-        if not available_fonts:
-            return None
-
-        paths = [f["path"] for f in available_fonts]
-        priorities = [f.get("priority", 1) for f in available_fonts]
-
-        return random.choices(paths, weights=priorities, k=1)[0]  # noqa: S311
+        # 3. If still nothing found, return None to trigger
+        # default font fallback
+        return None
 
     def _load_font(
         self, path: str | None, size: int, language: str | None

@@ -3,37 +3,20 @@
 Dynamic addition of transforms supports extension.
 """
 
-import importlib
-import inspect
 from typing import Annotated, Any, Union
 
-from pydantic import BaseModel, ConfigDict, Field, TypeAdapter
+from pydantic import BaseModel, ConfigDict, Field
 
 from synthocr.generate.transforms.base import (
     Annotation,
     BaseTransform,
     Sample,
     TextLine,
+    discover_transforms,
 )
 from synthocr.generate.transforms.settings import TRANSFORM_MODULES
 
-
-def _discover_transforms() -> list[type[BaseTransform]]:
-    """Discover all BaseTransform subclasses in specified modules."""
-    transforms = []
-    for module_name in TRANSFORM_MODULES:
-        module = importlib.import_module(module_name, package=__package__)
-        for _, obj in inspect.getmembers(module, inspect.isclass):
-            if (
-                issubclass(obj, BaseTransform)
-                and obj is not BaseTransform
-                and obj not in transforms
-            ):
-                transforms.append(obj)
-    return transforms
-
-
-ALL_TRANSFORMS = _discover_transforms()
+ALL_TRANSFORMS = discover_transforms(TRANSFORM_MODULES)
 
 # Export discovered transforms to the module namespace
 for cls in ALL_TRANSFORMS:

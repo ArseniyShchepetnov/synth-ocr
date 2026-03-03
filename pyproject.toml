@@ -89,3 +89,12 @@ line-ending = "auto"
 module = ["decouple", "datasets", "loguru", "PIL", "cv2"]
 ignore_missing_imports = true
 follow_untyped_imports = true
+
+
+[build-system]
+requires = ["uv_build>=0.10.7,<0.11.0"]
+build-backend = "uv_build"
+
+[tool.uv.build-backend]
+module-name = "synthocr"
+module-root = ""
