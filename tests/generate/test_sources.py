@@ -25,7 +25,7 @@ def test_wikipedia_source_priorities() -> None:
             [{"text": f"ka_{i}"} for i in range(1100)]
         )
 
-        mock_load.side_effect = lambda _p, name, _s, _st: {
+        mock_load.side_effect = lambda _p, name, **_kwargs: {
             "20231101.en": mock_ds_en,
             "20231101.ka": mock_ds_ka,
         }[name]
